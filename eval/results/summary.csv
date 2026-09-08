@@ -1,0 +1,17 @@
+metric,value
+clean_accuracy_raw,0.5
+clean_accuracy_shield,0.5
+trusted_accuracy_at_fixed_fpr,0.45454545454545453
+abstention_rate_overall,0.45
+attacked_accuracy_patch_naturalistic_raw,0.5
+attacked_accuracy_patch_naturalistic_shield,0.5
+attacked_accuracy_patch_solid_raw,0.0
+attacked_accuracy_patch_solid_shield,0.0
+attacked_accuracy_perturbation_raw,0.25
+attacked_accuracy_perturbation_shield,0.25
+attacked_accuracy_transform_raw,0.0
+attacked_accuracy_transform_shield,0.0
+latency_raw_p50_ms,1.4741499908268452
+latency_raw_p95_ms,2.3620950640179217
+latency_shield_p50_ms,7.245299988426268
+latency_shield_p95_ms,1513.128809828777

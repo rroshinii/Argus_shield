@@ -1,0 +1,125 @@
+{
+  "partition": "validation",
+  "image_root": "data/clean",
+  "metrics": {
+    "clean_accuracy": {
+      "raw": 1.0,
+      "shield": 1.0
+    },
+    "attacked_accuracy": {
+      "patch_naturalistic": {
+        "raw": 1.0,
+        "shield": 1.0
+      },
+      "patch_solid": {
+        "raw": 0.0,
+        "shield": 1.0
+      },
+      "perturbation": {
+        "raw": 1.0,
+        "shield": 1.0
+      },
+      "transform": {
+        "raw": 0.0,
+        "shield": 0.0
+      }
+    },
+    "trusted_accuracy_at_fixed_false_positive_rate": {
+      "accuracy": 1.0,
+      "threshold": 0.45056188106536865,
+      "false_positive_rate": 0.0,
+      "coverage": 0.2,
+      "count": 1
+    },
+    "abstention_rate": {
+      "overall": 0.2,
+      "per_attack_family": {
+        "clean": 0.0,
+        "patch_naturalistic": 0.0,
+        "patch_solid": 0.0,
+        "perturbation": 0.0,
+        "transform": 1.0
+      }
+    },
+    "false_positive_flag_rate_clean": 1.0,
+    "latency_ms": {
+      "raw": {
+        "p50": 1.4961999841034412,
+        "p95": 2.0655199885368347
+      },
+      "shield": {
+        "p50": 1507.134900195524,
+        "p95": 1648.0674800928682
+      }
+    }
+  },
+  "examples": {
+    "attack-recovered": {
+      "agreement_score": 0.0,
+      "anomaly_heatmap_path": "eval\\results\\heatmaps\\000002.png",
+      "anomaly_score": 0.45056188106536865,
+      "attack_family": "patch_solid",
+      "ground_truth_boxes": [
+        {
+          "box": [
+            40,
+            60,
+            210,
+            212
+          ],
+          "label": "car"
+        }
+      ],
+      "image_path": "car_sample.png",
+      "latency_ms": 1525.3298000898212,
+      "partition": "validation",
+      "raw_correct": false,
+      "raw_detections": [],
+      "raw_latency_ms": 0.7178999949246645,
+      "shield_confidence": 0.92,
+      "shield_correct": true,
+      "shield_decision": "FLAGGED_WITH_WARNING",
+      "shield_detections": [
+        {
+          "agreement_score": 0.0,
+          "box": [
+            40.0,
+            60.0,
+            210.0,
+            212.0
+          ],
+          "decision": "FLAGGED_WITH_WARNING",
+          "label": "car",
+          "score": 0.92
+        }
+      ]
+    },
+    "ambiguous-abstained": {
+      "agreement_score": 1.0,
+      "anomaly_heatmap_path": "eval\\results\\heatmaps\\000004.png",
+      "anomaly_score": 0.4560139775276184,
+      "attack_family": "transform",
+      "ground_truth_boxes": [
+        {
+          "box": [
+            40,
+            60,
+            210,
+            212
+          ],
+          "label": "car"
+        }
+      ],
+      "image_path": "car_sample.png",
+      "latency_ms": 1455.6917999871075,
+      "partition": "validation",
+      "raw_correct": false,
+      "raw_detections": [],
+      "raw_latency_ms": 1.5855999663472176,
+      "shield_confidence": 0.0,
+      "shield_correct": false,
+      "shield_decision": "ABSTAIN",
+      "shield_detections": []
+    }
+  }
+}

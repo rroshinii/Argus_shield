@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "argus-shield"
+version = "0.1.0"
+description = "Scaffold for evaluating an ARGUS model behind a defensive shield."
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "fastapi",
+    "python-multipart",
+    "uvicorn",
+    "pillow",
+    "numpy",
+    "opencv-python-headless",
+    "scikit-learn",
+    "pydantic",
+    "pyyaml",
+    "pandas",
+    "pytest",
+    "torch",
+    "torchvision",
+]
+
+[tool.setuptools.packages.find]
+include = ["adapter*", "attacks*", "defense*", "api*", "eval*", "dashboard*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

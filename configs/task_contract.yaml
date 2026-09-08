@@ -1,0 +1,11 @@
+task_type: object_detection
+input_format: image/png-or-jpeg
+output_schema: detections-label-score-box
+access_level: mock
+query_budget: 1000
+latency_budget_ms: 250
+abstention_allowed: true
+submission_format: json
+adapter: mock
+pretrained: true
+score_threshold: 0.5

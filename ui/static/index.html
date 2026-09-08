@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARGUS Shield — Defense Instrument</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <!-- Topbar / Instrument Header -->
+  <header class="topbar">
+    <div class="brand-section">
+      <span class="brand-title">ARGUS SHIELD</span>
+      <span class="brand-subtitle">Adversarial Boundary</span>
+      <span id="adapterBadge" class="badge badge-mock">MOCK MODE: FASTER-RCNN</span>
+    </div>
+
+    <nav class="nav-tabs">
+      <button class="tab-btn active" data-tab="inspectTab">INSPECT</button>
+      <button class="tab-btn" data-tab="evalTab">BATCH / EVAL</button>
+      <button class="tab-btn" data-tab="settingsTab">SETTINGS</button>
+    </nav>
+
+    <div class="topbar-meta">
+      <span id="systemStatus" class="badge" style="color: var(--text-secondary);">SYSTEM READY</span>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="app-container">
+
+    <!-- Tab 1: Inspect (Drop Zone & Single Result) -->
+    <div id="inspectTab" class="tab-content active">
+      <!-- Empty State / Drop Zone -->
+      <div id="dropZoneContainer" class="empty-drop-container">
+        <div id="dropZone" class="drop-zone">
+          <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp,image/bmp" style="display:none;">
+          <p class="drop-zone-primary">DRAG &amp; DROP IMAGE OR CLICK TO SELECT</p>
+          <p class="drop-zone-meta">Supports PNG, JPEG, WebP (Max 10 MB). Processed through multi-view anomaly and consistency defense.</p>
+          <button class="btn-secondary" onclick="document.getElementById('fileInput').click()">CHOOSE IMAGE</button>
+        </div>
+
+        <div class="sample-row">
+          <span class="sample-label">Or load sample:</span>
+          <button class="btn-secondary" id="btnSampleClean">Clean Car</button>
+          <button class="btn-secondary" id="btnSamplePerson">Clean Person</button>
+          <button class="btn-secondary" id="btnSampleStop">Clean Sign</button>
+        </div>
+      </div>
+
+      <!-- Result View (Split View) -->
+      <div id="resultViewer" class="result-viewer hidden">
+        <!-- Left: Image Viewport -->
+        <section class="viewport-panel">
+          <div class="viewport-toolbar">
+            <div class="toolbar-group">
+              <button class="btn-secondary" id="btnResetImage">NEW IMAGE</button>
+              <button class="btn-secondary" id="btnToggleHeatmap">SHOW ANOMALY HEATMAP</button>
+            </div>
+            <div class="toolbar-group">
+              <span id="imageDimensions" class="badge" style="color: var(--text-dim);">- x -</span>
+            </div>
+          </div>
+
+          <div class="canvas-container">
+            <div class="canvas-wrapper">
+              <canvas id="mainCanvas"></canvas>
+              <canvas id="heatmapCanvas"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- Right: Telemetry & Detections -->
+        <aside class="sidebar-panel">
+          <div class="panel-header">DEFENSE TELEMETRY</div>
+          
+          <div class="panel-section">
+            <div class="decision-banner">
+              <span class="decision-label">OVERALL DECISION</span>
+              <span id="overallDecision" class="decision-value color-trusted">TRUSTED</span>
+            </div>
+
+            <div class="metric-grid">
+              <div class="metric-card">
+                <div class="metric-title">Anomaly Score</div>
+                <div id="valAnomalyScore" class="metric-val">0.00</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-title">Agreement Score</div>
+                <div id="valAgreementScore" class="metric-val">1.00</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-title">Latency</div>
+                <div id="valLatency" class="metric-val">0 ms</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-title">Detections Count</div>
+                <div id="valDetectionsCount" class="metric-val">0</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-header">OBJECT DETECTIONS</div>
+          <div class="panel-section" style="flex: 1; overflow-y: auto;">
+            <div id="detectionsList" class="detections-container">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- Tab 2: Batch / Eval -->
+    <div id="evalTab" class="tab-content">
+      <div class="eval-layout">
+        <div class="section-head">
+          <h2 class="section-title">EVALUATION SUMMARY — RAW VS. SHIELD</h2>
+          <button class="btn-secondary" id="btnRunEval">RUN HARNESS ON MANIFEST</button>
+        </div>
+
+        <div class="eval-table-wrap">
+          <table class="eval-table">
+            <thead>
+              <tr>
+                <th>Measurement / Family</th>
+                <th>Raw Adapter</th>
+                <th>Shield Pipeline</th>
+                <th>Operating Delta / Context</th>
+              </tr>
+            </thead>
+            <tbody id="evalTableBody">
+              <tr>
+                <td colspan="4" style="text-align: center; color: var(--text-secondary); padding: 20px;">
+                  Loading evaluation records...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-title">LATENCY PROFILE OVER TEST SAMPLES (MS)</div>
+          <canvas id="latencyChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3: Settings -->
+    <div id="settingsTab" class="tab-content">
+      <div class="settings-layout">
+        <div class="section-head">
+          <h2 class="section-title">SYSTEM CONFIGURATION &amp; CONTRACT</h2>
+        </div>
+
+        <!-- Adapter Status -->
+        <div class="settings-card">
+          <div class="settings-card-head">ARGUS ADAPTER CONFIGURATION</div>
+          <div class="settings-card-body">
+            <div class="key-value-list">
+              <div class="key-value-item">
+                <span class="kv-key">Active Adapter Type</span>
+                <span id="cfgAdapterType" class="kv-val">MockArgusAdapter</span>
+              </div>
+              <div class="key-value-item">
+                <span class="kv-key">Deployment Status</span>
+                <span id="cfgDeployStatus" class="kv-val badge badge-mock">MOCK MODE ACTIVE</span>
+              </div>
+              <div class="key-value-item">
+                <span class="kv-key">Underlying Vision Model</span>
+                <span class="kv-val">torchvision.models.detection.fasterrcnn_resnet50_fpn</span>
+              </div>
+              <div class="key-value-item">
+                <span class="kv-key">Access Level</span>
+                <span class="kv-val">black-box (zero gradient access)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Defense Thresholds -->
+        <div class="settings-card">
+          <div class="settings-card-head">DEFENSE THRESHOLDS (configs/defense_thresholds.yaml)</div>
+          <div class="settings-card-body">
+            <div id="thresholdsList" class="key-value-list">
+              <div class="key-value-item">
+                <span class="kv-key">prefilter_threshold</span>
+                <span class="kv-val">0.15</span>
+              </div>
+              <div class="key-value-item">
+                <span class="kv-key">anomaly_threshold</span>
+                <span class="kv-val">0.45</span>
+              </div>
+              <div class="key-value-item">
+                <span class="kv-key">agreement_threshold</span>
+                <span class="kv-val">0.60</span>
+              </div>
+              <div class="key-value-item">
+                <span class="kv-key">confidence_threshold</span>
+                <span class="kv-val">0.35</span>
+              </div>
+              <div class="key-value-item">
+                <span class="kv-key">always_full_ensemble</span>
+                <span class="kv-val">false</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Task Contract -->
+        <div class="settings-card">
+          <div class="settings-card-head">TASK CONTRACT CONSTRAINTS</div>
+          <div class="settings-card-body">
+            <div class="key-value-list">
+              <div class="key-value-item">
+                <span class="kv-key">latency_budget_ms</span>
+                <span class="kv-val">250 ms</span>
+              </div>
+              <div class="key-value-item">
+                <span class="kv-key">false_positive_rate_budget</span>
+                <span class="kv-val">5.0% on clean images</span>
+              </div>
+              <div class="key-value-item">
+                <span class="kv-key">task_type</span>
+                <span class="kv-val">object_detection (boxes + labels)</span>
+              </div>
+              <div class="key-value-item">
+                <span class="kv-key">abstention_allowed</span>
+                <span class="kv-val">true</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Local Shield API Key -->
+        <div class="settings-card">
+          <div class="settings-card-head">CLIENT AUTHENTICATION KEY</div>
+          <div class="settings-card-body">
+            <div class="key-value-item">
+              <span class="kv-key">X-Shield-Key</span>
+              <input type="text" id="inputApiKey" class="input-text" value="argus-shield-local">
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

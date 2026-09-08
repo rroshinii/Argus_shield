@@ -1,0 +1,6 @@
+# Phase-1 defaults. Tune these in evaluation rather than in code.
+prefilter_threshold: 0.50
+anomaly_threshold: 0.20
+agreement_threshold: 0.60
+confidence_threshold: 0.35
+always_full_ensemble: false
